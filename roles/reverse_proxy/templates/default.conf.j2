@@ -1,0 +1,53 @@
+upstream preferences_servers {
+  {% for host in groups['preferences_servers'] %}
+  server {{ hostvars[host]['ansible_' + iface].ipv4.address }}:8080 max_fails=0 fail_timeout=10s;
+  {% endfor %}
+  keepalive 64;
+}
+
+server {
+    listen 80;
+
+    server_name {{ ansible_hostname }};
+
+    location / {
+      proxy_next_upstream error timeout http_500 http_502 http_503 http_504;
+      proxy_redirect off;
+      proxy_set_header   X-Real-IP            $remote_addr;
+      proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for;
+      proxy_set_header   X-Forwarded-Proto $scheme;
+      proxy_set_header   Host                   $http_host;
+      proxy_set_header   X-NginX-Proxy    true;
+      proxy_set_header   Connection "";
+      proxy_http_version 1.1;
+      proxy_pass         http://preferences_servers;
+    }
+}
+
+server {
+    listen 443 ssl;
+    server_name {{ ansible_hostname }};
+
+    ssl_certificate /etc/pki/tls/certs/server.crt;
+    ssl_certificate_key /etc/pki/tls/private/server.key;
+
+    ssl_prefer_server_ciphers on;
+    ssl_ciphers ECDHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-SHA384:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-SHA256:ECDHE-RSA-RC4-SHA:ECDHE-RSA-AES256-SHA:DHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES256-SHA256:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES128-SHA256:DHE-RSA-AES256-SHA:DHE-RSA-AES128-SHA:RC4-SHA:AES256-GCM-SHA384:AES256-SHA256:CAMELLIA256-SHA:ECDHE-RSA-AES128-SHA:AES128-GCM-SHA256:AES128-SHA256:AES128-SHA:CAMELLIA128-SHA;
+
+    ssl_session_cache   shared:SSL:10m;
+    ssl_session_timeout 10m;
+    keepalive_timeout   30;
+
+    location / {
+      proxy_next_upstream error timeout http_500 http_502 http_503 http_504;
+      proxy_redirect off;
+      proxy_set_header   X-Real-IP            $remote_addr;
+      proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for;
+      proxy_set_header   X-Forwarded-Proto $scheme;
+      proxy_set_header   Host                   $http_host;
+      proxy_set_header   X-NginX-Proxy    true;
+      proxy_set_header   Connection "";
+      proxy_http_version 1.1;
+      proxy_pass         http://preferences_servers;
+    }
+}

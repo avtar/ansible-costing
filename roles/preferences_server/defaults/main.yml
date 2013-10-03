@@ -1,0 +1,5 @@
+---
+# This is passed as a string to the production.json.j2 template and
+# then used as a boolean by the preferences server, so always quote
+# it otherwise Ansible will treat it as a boolean first.
+preferences_server_enable_logging: 'false'

@@ -1,0 +1,3 @@
+---
+- name: nodejs_app - start and enable nodejs_app_name
+  service: name={{ nodejs_app_name }} state=started enabled=yes

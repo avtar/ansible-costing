@@ -1,0 +1,41 @@
+---
+- name: couchdb - ensure /var/lib/couchdb exists
+  file: >
+    path=/var/lib/couchdb
+    state=directory
+    mode=0770
+    owner={{ couchdb_user }}
+    group={{ couchdb_group }}
+
+- name: couchdb - ensure /var/log/couchdb exists
+  file: >
+    path=/var/log/couchdb
+    state=directory
+    mode=0770
+    owner={{ couchdb_user }}
+    group={{ couchdb_group }}
+
+- name: couchdb - ensure /var/run/couchdb exists
+  file: >
+    path=/var/run/couchdb
+    state=directory
+    mode=0775
+    owner={{ couchdb_user }}
+    group={{ couchdb_group }}
+
+- name: couchdb - create /etc/init.d/couchdb script
+  copy: >
+    src=couchdb.init
+    dest=/etc/init.d/couchdb
+    mode=0755
+    owner=root
+    group=root
+
+- name: couchdb - create /etc/couchdb/local.ini
+  template: >
+    src=local.ini.j2
+    dest=/etc/couchdb/local.ini
+    mode=0640
+    owner={{ couchdb_user }}
+    group={{ couchdb_group }}
+  notify: restart couchdb

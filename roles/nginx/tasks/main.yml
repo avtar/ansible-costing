@@ -1,0 +1,6 @@
+---
+- include: configuration.yml
+
+- include: software.yml
+
+- include: services.yml

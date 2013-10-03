@@ -1,0 +1,653 @@
+<?xml version="1.0"?>
+<!DOCTYPE tsung SYSTEM "/usr/share/tsung/tsung-1.0.dtd" [] >
+<tsung loglevel="warning">
+
+  <clients>
+    {% for host in groups['tsung_clients'] %}
+    <client host="{{ host }}" weight="1" maxusers="40000" cpu="4" />
+    {% endfor %}
+  </clients>
+
+  <servers>
+    {% for host in groups['reverse_proxies'] %}
+    <server host="{{ host }}" port="80" type="tcp"/>
+    {% endfor %}
+  </servers>
+
+  <monitoring>
+    {% for host in groups['tsung_monitored'] %}
+    <monitor host="{{ host }}" type="erlang"></monitor>
+    {% endfor %}
+  </monitoring>
+
+  <load>
+    <arrivalphase phase="1" duration="30" unit="minute">
+      <users arrivalrate="50" unit="second"></users>
+    </arrivalphase>
+  </load>
+
+  <options>
+    <option name="ports_range" min="1025" max="65535"/>
+  </options>
+
+  <!-- Sessions for a connection. Sum of all sessions probabilities must be 100 -->
+  <sessions>
+    <session name="session1" probability="3" type="ts_http">
+      <request subst="true">
+        <http
+          method="POST"
+          url="/user/rajesh%%ts_user_server:get_unique_id%%"
+          content_type="application/json"
+          contents="{
+            &quot;http://registry.gpii.org/common/tableOfContents&quot;:[
+              {
+                &quot;value&quot;:&quot;true&quot;
+              }
+            ]
+          }"
+        >
+        </http>
+      </request>
+    </session>
+    <session name="session2" probability="1" type="ts_http">
+      <request subst="true">
+        <http
+          method="POST"
+          url="/user/carla%%ts_user_server:get_unique_id%%"
+          content_type="application/json"
+          contents="{
+            &quot;http://registry.gpii.org/applications/com.texthelp.readWriteGold&quot;: [{
+                &quot;value&quot;: {
+                    &quot;ApplicationSettings.AppBar.Width.$t&quot;: 788,
+                    &quot;ApplicationSettings.AppBar.ShowText.$t&quot;: true,
+                    &quot;ApplicationSettings.AppBar.optToolbarShowText.$t&quot;: true,
+                    &quot;ApplicationSettings.AppBar.LargeIcons.$t&quot;: true,
+                    &quot;ApplicationSettings.AppBar.optToolbarLargeIcons.$t&quot;: true,
+                    &quot;ApplicationSettings.Speech.optSAPI5Speed.$t&quot;: 50,
+                    &quot;ApplicationSettings.Speech.optAutoUseScreenReading.$t&quot;: false
+                }
+            }],
+            &quot;http://registry.gpii.org/applications/fluid.uiOptions.windows&quot;: [{ &quot;value&quot;: {}}],
+            &quot;http://registry.gpii.org/applications/fluid.uiOptions.linux&quot;: [{ &quot;value&quot;: {}}],
+            &quot;http://registry.gpii.org/applications/fluid.uiOptions&quot;: [{
+                &quot;value&quot;: {
+                    &quot;lineSpacing&quot;: &quot;2&quot;,
+                    &quot;links&quot;: true,
+                    &quot;inputsLarger&quot;: true,
+                    &quot;captions&quot;: false,
+                    &quot;transcripts&quot;: false,
+                    &quot;volume&quot;: &quot;50&quot;
+                }
+            }],
+            &quot;http://registry.gpii.org/applications/org.gnome.desktop.a11y.magnifier&quot;: [{
+                &quot;value&quot;: {
+                    &quot;show-cross-hairs&quot;: true,
+                    &quot;lens-mode&quot;: false,
+                    &quot;mag-factor&quot;: 2,
+                    &quot;mouse-tracking&quot;: &quot;proportional&quot;,
+                    &quot;screen-position&quot;: &quot;right-half&quot;,
+                    &quot;scroll-at-edges&quot;: true
+                }
+            }],
+            &quot;http://registry.gpii.org/applications/com.microsoft.windows.magnifier&quot;: [{
+                &quot;value&quot;: {
+                    &quot;Magnification&quot;: {
+                        &quot;value&quot;: 200,
+                        &quot;dataType&quot;: &quot;REG_DWORD&quot;
+                    },
+                    &quot;ZoomIncrement&quot;: {
+                        &quot;value&quot;: 50,
+                        &quot;dataType&quot;: &quot;REG_DWORD&quot;
+                    },
+                    &quot;Invert&quot;: {
+                        &quot;value&quot;: 0,
+                        &quot;dataType&quot;: &quot;REG_DWORD&quot;
+                    },
+                    &quot;FollowMouse&quot;: {
+                        &quot;value&quot;: 1,
+                        &quot;dataType&quot;: &quot;REG_DWORD&quot;
+                    },
+                    &quot;FollowFocus&quot;: {
+                        &quot;value&quot;: 1,
+                        &quot;dataType&quot;: &quot;REG_DWORD&quot;
+                    },
+                    &quot;FollowCaret&quot;: {
+                        &quot;value&quot;: 1,
+                        &quot;dataType&quot;: &quot;REG_DWORD&quot;
+                    },
+                    &quot;MagnificationModel&quot;: {
+                        &quot;value&quot;: 1,
+                        &quot;dataType&quot;: &quot;REG_DWORD&quot;
+                    }
+                }
+            }],
+            &quot;http://registry.gpii.org/common/fontSize&quot;: [{ &quot;value&quot;: 24 }],
+            &quot;http://registry.gpii.org/common/foregroundColor&quot;: [{ &quot;value&quot;: &quot;white&quot; }],
+            &quot;http://registry.gpii.org/common/backgroundColor&quot;: [{ &quot;value&quot;: &quot;black&quot; }],
+            &quot;http://registry.gpii.org/common/fontFaceFontName&quot;: [{ &quot;value&quot;: [&quot;Comic Sans&quot;] }],
+            &quot;http://registry.gpii.org/common/fontFaceGenericFontFace&quot;: [{ &quot;value&quot;: &quot;sans serif&quot; }],
+            &quot;http://registry.gpii.org/common/magnification&quot;: [{ &quot;value&quot;: 2.0 }],
+            &quot;http://registry.gpii.org/common/tracking&quot;: [{ &quot;value&quot;: &quot;mouse&quot; }],
+            &quot;http://registry.gpii.org/common/invertImages&quot;: [{ &quot;value&quot;: true }],
+            &quot;http://registry.gpii.org/common/adaptationPreference&quot;: [{ &quot;value&quot;: [
+                {
+                    &quot;adaptationType&quot;: &quot;caption&quot;,
+                    &quot;language&quot;: &quot;en&quot;
+                },
+                {}
+            ]}],
+            &quot;http://registry.gpii.org/common/tableOfContents&quot;: [{ &quot;value&quot;: false }]
+        }"
+        >
+        </http>
+      </request>
+    </session>
+    <session name="session3" probability="2" type="ts_http">
+      <setdynvars sourcetype="random_number" start="3" end="32">
+        <var name="rndint" />
+      </setdynvars>
+      <request subst="true">
+        <http
+          method="POST"
+          url="/user/kasper%%_rndint%%"
+          content_type="application/json"
+          contents="{
+            &quot;http://registry.gpii.org/applications/com.microsoft.windows.cursors&quot;: [{
+                &quot;value&quot;: {
+                    &quot;No&quot;: &quot;large&quot;,
+                    &quot;Hand&quot;: &quot;large&quot;,
+                    &quot;Help&quot;: &quot;large&quot;,
+                    &quot;Wait&quot;: &quot;large&quot;,
+                    &quot;Arrow&quot;: &quot;large&quot;,
+                    &quot;NWPen&quot;: &quot;large&quot;,
+                    &quot;SizeNS&quot;: &quot;large&quot;,
+                    &quot;SizeWE&quot;: &quot;large&quot;,
+                    &quot;SizeAll&quot;: &quot;large&quot;,
+                    &quot;UpArrow&quot;: &quot;large&quot;,
+                    &quot;SizeNESW&quot;: &quot;large&quot;,
+                    &quot;SizeNWSE&quot;: &quot;large&quot;,
+                    &quot;AppStarting&quot;: &quot;large&quot;
+                }
+            }],
+            &quot;http://registry.gpii.org/applications/com.microsoft.windows.highContrast.HighContrastOn&quot;: [{
+                &quot;value&quot;: true
+            }],
+            &quot;http://registry.gpii.org/applications/com.microsoft.windows.magnifier.FollowCaret&quot;: [{ &quot;value&quot;: 1 }],
+            &quot;http://registry.gpii.org/applications/com.microsoft.windows.magnifier.FollowFocus&quot;: [{ &quot;value&quot;: 1 }],
+            &quot;http://registry.gpii.org/applications/com.microsoft.windows.magnifier.FollowMouse&quot;: [{ &quot;value&quot;: 1 }],
+            &quot;http://registry.gpii.org/applications/com.microsoft.windows.magnifier.Magnification&quot;: [{
+                &quot;value&quot;: &quot;200%&quot;
+            }],
+            &quot;http://registry.gpii.org/applications/com.microsoft.windows.magnifier.MagnificationMode&quot;: [{
+                &quot;value&quot;: &quot;lens&quot;
+            }],
+            &quot;http://registry.gpii.org/applications/com.texthelp.readWriteGold&quot;: [{
+                &quot;value&quot;: {
+                    &quot;ApplicationSettings.AppBar.Width.$t&quot;: 788,
+                    &quot;ApplicationSettings.AppBar.Width.$t&quot;: 1072,
+                    &quot;ApplicationSettings.AppBar.ShowText.$t&quot;: true,
+                    &quot;ApplicationSettings.AppBar.optToolbarShowText.$t&quot;: true,
+                    &quot;ApplicationSettings.AppBar.LargeIcons.$t&quot;: true,
+                    &quot;ApplicationSettings.AppBar.optToolbarLargeIcons.$t&quot;: true,
+                    &quot;ApplicationSettings.Speech.optSAPI5Speed.$t&quot;: 50,
+                    &quot;ApplicationSettings.Speech.optAutoUseScreenReading.$t&quot;: false
+                }
+            }],
+            &quot;http://registry.gpii.org/applications/fluid.uiOptions.windows&quot;: [{ &quot;value&quot;: {}}],
+            &quot;http://registry.gpii.org/applications/fluid.uiOptions.linux&quot;: [{ &quot;value&quot;: {}}],
+            &quot;http://registry.gpii.org/applications/fluid.uiOptions&quot;: [{
+                &quot;value&quot;: {
+                    &quot;lineSpacing&quot;: &quot;1.5&quot;,
+                    &quot;links&quot;: true,
+                    &quot;inputsLarger&quot;: true,
+                    &quot;captions&quot;: false,
+                    &quot;transcripts&quot;: false,
+                    &quot;volume&quot;: &quot;50&quot;
+                }
+            }],
+            &quot;http://registry.gpii.org/applications/org.gnome.desktop.a11y.applications.orca.enableBraille&quot;: [{
+                &quot;value&quot;: true
+            }],
+            &quot;http://registry.gpii.org/applications/org.gnome.desktop.a11y.applications.orca.general.enableEchoByCharacter&quot;: [{
+                &quot;value&quot;: true
+            }],
+            &quot;http://registry.gpii.org/applications/org.gnome.desktop.a11y.applications.orca.general.enableEchoByWord&quot;: [{
+                &quot;value&quot;: true
+            }],
+            &quot;http://registry.gpii.org/applications/org.gnome.desktop.a11y.applications.orca.voice.family.name&quot;: [{
+                &quot;value&quot;: &quot;en&quot;
+            }],
+            &quot;http://registry.gpii.org/applications/org.gnome.desktop.a11y.applications.screen-reader-enabled&quot;: [{
+                &quot;value&quot;: true
+            }],
+            &quot;http://registry.gpii.org/applications/org.gnome.desktop.a11y.applications.screen-magnifier-enabled&quot;: [{
+                &quot;value&quot;: true
+            }],
+            &quot;http://registry.gpii.org/applications/org.gnome.desktop.a11y.magnifier.mag-factor&quot;: [{
+                &quot;value&quot;: 3
+            }],
+            &quot;http://registry.gpii.org/applications/org.gnome.desktop.a11y.magnifier.mouse-tracking&quot;: [{
+                &quot;value&quot;: &quot;centered&quot;
+            }],
+            &quot;http://registry.gpii.org/applications/org.gnome.desktop.a11y.magnifier.screen-position&quot;: [{
+                &quot;value&quot;: &quot;TopHalf&quot;
+            }],
+            &quot;http://registry.gpii.org/applications/org.gnome.desktop.a11y.orca.general.enableTutorialMessages&quot;: [{
+                &quot;value&quot;: true
+            }],
+            &quot;http://registry.gpii.org/applications/org.gnome.desktop.a11y.orca.general.sayAllStyle&quot;: [{
+                &quot;value&quot;: 0
+            }],
+            &quot;http://registry.gpii.org/applications/org.gnome.desktop.a11y.orca.voice.verbalizePunctuationStyle&quot;: [{
+                &quot;value&quot;: 3
+            }],
+            &quot;http://registry.gpii.org/applications/org.gnome.desktop.background.primary-color&quot;: [{
+                &quot;value&quot;: &quot;#FFFFFF&quot;
+            }],
+            &quot;http://registry.gpii.org/applications/org.gnome.desktop.interface&quot;: [{
+                &quot;value&quot;: {
+                    &quot;text-scaling-factor&quot;: 1.6,
+                    &quot;gtk-theme&quot;: &quot;Adwaita&quot;,
+                    &quot;icon-theme&quot;: &quot;gnome&quot;,
+                    &quot;cursor-size&quot;: 17
+                }
+            }],
+            &quot;http://registry.gpii.org/applications/org.gnome.nautilus&quot;: [{
+                &quot;value&quot;: {
+                    &quot;font&quot;: &quot;Cantarell 18&quot;
+                }
+            }],
+            &quot;http://registry.gpii.org/applications/org.gnome.orca.voices.default.rate&quot;: [{ &quot;value&quot;: 55 }],
+            &quot;http://registry.gpii.org/applications/org.nvda-project.braille.display&quot;: [{ &quot;value&quot;: &quot;braille&quot; }],
+            &quot;http://registry.gpii.org/applications/org.nvda-project.braille.readByParagraph&quot;: [{
+                &quot;value&quot;: true }],
+            &quot;http://registry.gpii.org/applications/org.nvda-project.keyboard.speakTypedCharacters &quot;: [{
+                &quot;value&quot;: false }],
+            &quot;http://registry.gpii.org/applications/org.nvda-project.keyboard.speakTypedWords &quot;: [{ &quot;value&quot;: false }],
+            &quot;http://registry.gpii.org/applications/org.nvda-project.mouse.enableMouseTracking &quot;: [{ &quot;value&quot;: true }],
+            &quot;http://registry.gpii.org/applications/org.nvda-project.presentation.reportHelpBalloons&quot;: [{
+                &quot;value&quot;: false
+            }],
+            &quot;http://registry.gpii.org/applications/org.nvda-project.speech.espeak.beepForCapitals&quot;: [{ &quot;value&quot;: true }],
+            &quot;http://registry.gpii.org/applications/org.nvda-project.speech.espeak.capPitchChange&quot;: [{ &quot;value&quot;: true }],
+            &quot;http://registry.gpii.org/applications/org.nvda-project.speech.espeak.rate&quot;: [{ &quot;value&quot;: 80 }],
+            &quot;http://registry.gpii.org/applications/org.nvda-project.speech.espeak.rateBoost&quot;: [{ &quot;value&quot;: true }],
+            &quot;http://registry.gpii.org/applications/org.nvda-project.speech.espeak.sayCapForCapitals&quot;: [{ &quot;value&quot;: true }],
+            &quot;http://registry.gpii.org/applications/org.nvda-project.speech.espeak.voice&quot;: [{ &quot;value&quot;: &quot;en&quot; }],
+            &quot;http://registry.gpii.org/applications/org.nvda-project.speech.symbolLevel&quot;: [{ &quot;value&quot;: 300 }],
+            &quot;http://registry.gpii.org/common/adaptationPreference&quot;: [{ &quot;value&quot;: [
+                {
+                    &quot;adaptationType&quot;: &quot;caption&quot;,
+                    &quot;language&quot;: &quot;en&quot;
+                },
+                {}
+            ]}],
+            &quot;http://registry.gpii.org/common/announceCapitals&quot;: [{ &quot;value&quot;: true }],
+            &quot;http://registry.gpii.org/common/auditoryOutLanguage&quot;: [{ &quot;value&quot;: &quot;en-AT&quot; }],
+            &quot;http://registry.gpii.org/common/backgroundColor&quot;: [{ &quot;value&quot;: &quot;black&quot; }],
+            &quot;http://registry.gpii.org/common/cursorSize&quot;: [{ &quot;value&quot;: 1.0 }],
+            &quot;http://registry.gpii.org/common/cursorTrail&quot;: [{ &quot;value&quot;: true }],
+            &quot;http://registry.gpii.org/common/fontSize&quot;: [{ &quot;value&quot;: 18 }],
+            &quot;http://registry.gpii.org/common/foregroundColor&quot;: [{ &quot;value&quot;: &quot;white&quot; }],
+            &quot;http://registry.gpii.org/common/fontFaceFontName&quot;: [{ &quot;value&quot;: [&quot;Comic Sans&quot;] }],
+            &quot;http://registry.gpii.org/common/fontFaceGenericFontFace&quot;: [{ &quot;value&quot;: &quot;sans serif&quot; }],
+            &quot;http://registry.gpii.org/common/keyEcho&quot;: [{ &quot;value&quot;: true }],
+            &quot;http://registry.gpii.org/common/magnification&quot;: [{ &quot;value&quot;: 2 }],
+            &quot;http://registry.gpii.org/common/magnifierEnabled&quot;: [{ &quot;value&quot;: true }],
+            &quot;http://registry.gpii.org/common/magnificationPosition&quot;: [{ &quot;value&quot;: &quot;TopHalf&quot; }],
+            &quot;http://registry.gpii.org/common/readingUnit&quot;: [{ &quot;value&quot;: &quot;line&quot; }],
+            &quot;http://registry.gpii.org/common/punctuationVerbosity&quot;: [{ &quot;value&quot;: &quot;all&quot; }],
+            &quot;http://registry.gpii.org/common/screenReaderBrailleOutput&quot;: [{ &quot;value&quot;: true }],
+            &quot;http://registry.gpii.org/common/screenReaderTTSEnabled&quot;: [{ &quot;value&quot;: true }],
+            &quot;http://registry.gpii.org/common/speakTutorialMessages&quot;: [{ &quot;value&quot;: true }],
+            &quot;http://registry.gpii.org/common/speechRate&quot;: [{ &quot;value&quot;: 80 }],
+            &quot;http://registry.gpii.org/common/tableOfContents&quot;: [{ &quot;value&quot;: false }],
+            &quot;http://registry.gpii.org/common/tracking&quot;: [{ &quot;value&quot;: &quot;focus&quot; }],
+            &quot;http://registry.gpii.org/common/wordEcho&quot;: [{ &quot;value&quot;: true }]
+          }"
+        >
+        </http>
+      </request>
+      <request subst="true">
+        <http
+          method="GET"
+          url="/user/kasper%%_rndint%%"
+        >
+        </http>
+      </request>
+      <request subst="true">
+        <http
+          method="POST"
+          url="/user/kasper%%_rndint%%"
+          content_type="application/json"
+          contents="{
+            &quot;http://registry.gpii.org/applications/com.microsoft.windows.cursors&quot;: [{
+                &quot;value&quot;: {
+                    &quot;No&quot;: &quot;large&quot;,
+                    &quot;Hand&quot;: &quot;large&quot;,
+                    &quot;Help&quot;: &quot;large&quot;,
+                    &quot;Wait&quot;: &quot;large&quot;,
+                    &quot;Arrow&quot;: &quot;large&quot;,
+                    &quot;NWPen&quot;: &quot;large&quot;,
+                    &quot;SizeNS&quot;: &quot;large&quot;,
+                    &quot;SizeWE&quot;: &quot;large&quot;,
+                    &quot;SizeAll&quot;: &quot;large&quot;,
+                    &quot;UpArrow&quot;: &quot;large&quot;,
+                    &quot;SizeNESW&quot;: &quot;large&quot;,
+                    &quot;SizeNWSE&quot;: &quot;large&quot;,
+                    &quot;AppStarting&quot;: &quot;large&quot;
+                }
+            }],
+            &quot;http://registry.gpii.org/applications/com.microsoft.windows.highContrast.HighContrastOn&quot;: [{
+                &quot;value&quot;: false
+            }],
+            &quot;http://registry.gpii.org/applications/com.microsoft.windows.magnifier.FollowCaret&quot;: [{ &quot;value&quot;: 1 }],
+            &quot;http://registry.gpii.org/applications/com.microsoft.windows.magnifier.FollowFocus&quot;: [{ &quot;value&quot;: 1 }],
+            &quot;http://registry.gpii.org/applications/com.microsoft.windows.magnifier.FollowMouse&quot;: [{ &quot;value&quot;: 1 }],
+            &quot;http://registry.gpii.org/applications/com.microsoft.windows.magnifier.Magnification&quot;: [{
+                &quot;value&quot;: &quot;200%&quot;
+            }],
+            &quot;http://registry.gpii.org/applications/com.microsoft.windows.magnifier.MagnificationMode&quot;: [{
+                &quot;value&quot;: &quot;lens&quot;
+            }],
+            &quot;http://registry.gpii.org/applications/com.texthelp.readWriteGold&quot;: [{
+                &quot;value&quot;: {
+                    &quot;ApplicationSettings.AppBar.Width.$t&quot;: 788,
+                    &quot;ApplicationSettings.AppBar.Width.$t&quot;: 1072,
+                    &quot;ApplicationSettings.AppBar.ShowText.$t&quot;: false,
+                    &quot;ApplicationSettings.AppBar.optToolbarShowText.$t&quot;: false,
+                    &quot;ApplicationSettings.AppBar.LargeIcons.$t&quot;: true,
+                    &quot;ApplicationSettings.AppBar.optToolbarLargeIcons.$t&quot;: false,
+                    &quot;ApplicationSettings.Speech.optSAPI5Speed.$t&quot;: 50,
+                    &quot;ApplicationSettings.Speech.optAutoUseScreenReading.$t&quot;: false
+                }
+            }],
+            &quot;http://registry.gpii.org/applications/fluid.uiOptions.windows&quot;: [{ &quot;value&quot;: {}}],
+            &quot;http://registry.gpii.org/applications/fluid.uiOptions.linux&quot;: [{ &quot;value&quot;: {}}],
+            &quot;http://registry.gpii.org/applications/fluid.uiOptions&quot;: [{
+                &quot;value&quot;: {
+                    &quot;lineSpacing&quot;: &quot;1.5&quot;,
+                    &quot;links&quot;: true,
+                    &quot;inputsLarger&quot;: true,
+                    &quot;captions&quot;: false,
+                    &quot;transcripts&quot;: false,
+                    &quot;volume&quot;: &quot;50&quot;
+                }
+            }],
+            &quot;http://registry.gpii.org/applications/org.gnome.desktop.a11y.applications.orca.enableBraille&quot;: [{
+                &quot;value&quot;: true
+            }],
+            &quot;http://registry.gpii.org/applications/org.gnome.desktop.a11y.applications.orca.general.enableEchoByCharacter&quot;: [{
+                &quot;value&quot;: true
+            }],
+            &quot;http://registry.gpii.org/applications/org.gnome.desktop.a11y.applications.orca.general.enableEchoByWord&quot;: [{
+                &quot;value&quot;: true
+            }],
+            &quot;http://registry.gpii.org/applications/org.gnome.desktop.a11y.applications.orca.voice.family.name&quot;: [{
+                &quot;value&quot;: &quot;en&quot;
+            }],
+            &quot;http://registry.gpii.org/applications/org.gnome.desktop.a11y.applications.screen-reader-enabled&quot;: [{
+                &quot;value&quot;: true
+            }],
+            &quot;http://registry.gpii.org/applications/org.gnome.desktop.a11y.applications.screen-magnifier-enabled&quot;: [{
+                &quot;value&quot;: true
+            }],
+            &quot;http://registry.gpii.org/applications/org.gnome.desktop.a11y.magnifier.mag-factor&quot;: [{
+                &quot;value&quot;: 3
+            }],
+            &quot;http://registry.gpii.org/applications/org.gnome.desktop.a11y.magnifier.mouse-tracking&quot;: [{
+                &quot;value&quot;: &quot;centered&quot;
+            }],
+            &quot;http://registry.gpii.org/applications/org.gnome.desktop.a11y.magnifier.screen-position&quot;: [{
+                &quot;value&quot;: &quot;TopHalf&quot;
+            }],
+            &quot;http://registry.gpii.org/applications/org.gnome.desktop.a11y.orca.general.enableTutorialMessages&quot;: [{
+                &quot;value&quot;: true
+            }],
+            &quot;http://registry.gpii.org/applications/org.gnome.desktop.a11y.orca.general.sayAllStyle&quot;: [{
+                &quot;value&quot;: 0
+            }],
+            &quot;http://registry.gpii.org/applications/org.gnome.desktop.a11y.orca.voice.verbalizePunctuationStyle&quot;: [{
+                &quot;value&quot;: 3
+            }],
+            &quot;http://registry.gpii.org/applications/org.gnome.desktop.background.primary-color&quot;: [{
+                &quot;value&quot;: &quot;#FFFFFF&quot;
+            }],
+            &quot;http://registry.gpii.org/applications/org.gnome.desktop.interface&quot;: [{
+                &quot;value&quot;: {
+                    &quot;text-scaling-factor&quot;: 1.6,
+                    &quot;gtk-theme&quot;: &quot;Adwaita&quot;,
+                    &quot;icon-theme&quot;: &quot;gnome&quot;,
+                    &quot;cursor-size&quot;: 17
+                }
+            }],
+            &quot;http://registry.gpii.org/applications/org.gnome.nautilus&quot;: [{
+                &quot;value&quot;: {
+                    &quot;font&quot;: &quot;Cantarell 18&quot;
+                }
+            }],
+            &quot;http://registry.gpii.org/applications/org.gnome.orca.voices.default.rate&quot;: [{ &quot;value&quot;: 55 }],
+            &quot;http://registry.gpii.org/applications/org.nvda-project.braille.display&quot;: [{ &quot;value&quot;: &quot;braille&quot; }],
+            &quot;http://registry.gpii.org/applications/org.nvda-project.braille.readByParagraph&quot;: [{
+                &quot;value&quot;: true }],
+            &quot;http://registry.gpii.org/applications/org.nvda-project.keyboard.speakTypedCharacters &quot;: [{
+                &quot;value&quot;: false }],
+            &quot;http://registry.gpii.org/applications/org.nvda-project.keyboard.speakTypedWords &quot;: [{ &quot;value&quot;: false }],
+            &quot;http://registry.gpii.org/applications/org.nvda-project.mouse.enableMouseTracking &quot;: [{ &quot;value&quot;: true }],
+            &quot;http://registry.gpii.org/applications/org.nvda-project.presentation.reportHelpBalloons&quot;: [{
+                &quot;value&quot;: false
+            }],
+            &quot;http://registry.gpii.org/applications/org.nvda-project.speech.espeak.beepForCapitals&quot;: [{ &quot;value&quot;: true }],
+            &quot;http://registry.gpii.org/applications/org.nvda-project.speech.espeak.capPitchChange&quot;: [{ &quot;value&quot;: true }],
+            &quot;http://registry.gpii.org/applications/org.nvda-project.speech.espeak.rate&quot;: [{ &quot;value&quot;: 80 }],
+            &quot;http://registry.gpii.org/applications/org.nvda-project.speech.espeak.rateBoost&quot;: [{ &quot;value&quot;: true }],
+            &quot;http://registry.gpii.org/applications/org.nvda-project.speech.espeak.sayCapForCapitals&quot;: [{ &quot;value&quot;: true }],
+            &quot;http://registry.gpii.org/applications/org.nvda-project.speech.espeak.voice&quot;: [{ &quot;value&quot;: &quot;en&quot; }],
+            &quot;http://registry.gpii.org/applications/org.nvda-project.speech.symbolLevel&quot;: [{ &quot;value&quot;: 300 }],
+            &quot;http://registry.gpii.org/common/adaptationPreference&quot;: [{ &quot;value&quot;: [
+                {
+                    &quot;adaptationType&quot;: &quot;caption&quot;,
+                    &quot;language&quot;: &quot;en&quot;
+                },
+                {}
+            ]}],
+            &quot;http://registry.gpii.org/common/announceCapitals&quot;: [{ &quot;value&quot;: true }],
+            &quot;http://registry.gpii.org/common/auditoryOutLanguage&quot;: [{ &quot;value&quot;: &quot;en-AT&quot; }],
+            &quot;http://registry.gpii.org/common/backgroundColor&quot;: [{ &quot;value&quot;: &quot;black&quot; }],
+            &quot;http://registry.gpii.org/common/cursorSize&quot;: [{ &quot;value&quot;: 1.0 }],
+            &quot;http://registry.gpii.org/common/cursorTrail&quot;: [{ &quot;value&quot;: true }],
+            &quot;http://registry.gpii.org/common/fontSize&quot;: [{ &quot;value&quot;: 18 }],
+            &quot;http://registry.gpii.org/common/foregroundColor&quot;: [{ &quot;value&quot;: &quot;white&quot; }],
+            &quot;http://registry.gpii.org/common/fontFaceFontName&quot;: [{ &quot;value&quot;: [&quot;Comic Sans&quot;] }],
+            &quot;http://registry.gpii.org/common/fontFaceGenericFontFace&quot;: [{ &quot;value&quot;: &quot;sans serif&quot; }],
+            &quot;http://registry.gpii.org/common/keyEcho&quot;: [{ &quot;value&quot;: true }],
+            &quot;http://registry.gpii.org/common/magnification&quot;: [{ &quot;value&quot;: 2 }],
+            &quot;http://registry.gpii.org/common/magnifierEnabled&quot;: [{ &quot;value&quot;: true }],
+            &quot;http://registry.gpii.org/common/magnificationPosition&quot;: [{ &quot;value&quot;: &quot;TopHalf&quot; }],
+            &quot;http://registry.gpii.org/common/readingUnit&quot;: [{ &quot;value&quot;: &quot;line&quot; }],
+            &quot;http://registry.gpii.org/common/punctuationVerbosity&quot;: [{ &quot;value&quot;: &quot;all&quot; }],
+            &quot;http://registry.gpii.org/common/screenReaderBrailleOutput&quot;: [{ &quot;value&quot;: true }],
+            &quot;http://registry.gpii.org/common/screenReaderTTSEnabled&quot;: [{ &quot;value&quot;: true }],
+            &quot;http://registry.gpii.org/common/speakTutorialMessages&quot;: [{ &quot;value&quot;: true }],
+            &quot;http://registry.gpii.org/common/speechRate&quot;: [{ &quot;value&quot;: 80 }],
+            &quot;http://registry.gpii.org/common/tableOfContents&quot;: [{ &quot;value&quot;: false }],
+            &quot;http://registry.gpii.org/common/tracking&quot;: [{ &quot;value&quot;: &quot;focus&quot; }],
+            &quot;http://registry.gpii.org/common/wordEcho&quot;: [{ &quot;value&quot;: true }]
+          }"
+        >
+        </http>
+      </request>
+      <request subst="true">
+        <http
+          method="GET"
+          url="/user/kasper%%_rndint%%"
+        >
+        </http>
+      </request>
+    </session>
+    <session name="session4" probability="3" type="ts_http">
+      <request subst="true">
+        <http
+          method="POST"
+          url="/user/elaine"
+          content_type="application/json"
+          contents="{
+            &quot;http://registry.gpii.org/applications/org.gnome.nautilus&quot;: [{
+                &quot;value&quot;: {
+                    &quot;font&quot;: &quot;Cantarell 18&quot;
+                }
+            }]
+          }"
+        >
+        </http>
+      </request>
+    </session>
+    <session name="session5" probability="5" type="ts_http">
+      <request>
+        <http
+          method="POST"
+          url="/user/carla"
+          content_type="application/json"
+          contents="{
+            &quot;http://registry.gpii.org/applications/com.texthelp.readWriteGold&quot;: [{
+                &quot;value&quot;: {
+                    &quot;ApplicationSettings.AppBar.Width.$t&quot;: 700,
+                    &quot;ApplicationSettings.AppBar.ShowText.$t&quot;: false,
+                    &quot;ApplicationSettings.AppBar.optToolbarShowText.$t&quot;: false,
+                    &quot;ApplicationSettings.AppBar.LargeIcons.$t&quot;: false,
+                    &quot;ApplicationSettings.AppBar.optToolbarLargeIcons.$t&quot;: false,
+                    &quot;ApplicationSettings.Speech.optSAPI5Speed.$t&quot;: 25,
+                    &quot;ApplicationSettings.Speech.optAutoUseScreenReading.$t&quot;: true
+                }
+            }],
+            &quot;http://registry.gpii.org/applications/fluid.uiOptions.windows&quot;: [{ &quot;value&quot;: {}}],
+            &quot;http://registry.gpii.org/applications/fluid.uiOptions.linux&quot;: [{ &quot;value&quot;: {}}],
+            &quot;http://registry.gpii.org/applications/fluid.uiOptions&quot;: [{
+                &quot;value&quot;: {
+                    &quot;lineSpacing&quot;: &quot;2&quot;,
+                    &quot;links&quot;: true,
+                    &quot;inputsLarger&quot;: true,
+                    &quot;captions&quot;: false,
+                    &quot;transcripts&quot;: false,
+                    &quot;volume&quot;: &quot;50&quot;
+                }
+            }],
+            &quot;http://registry.gpii.org/applications/org.gnome.desktop.a11y.magnifier&quot;: [{
+                &quot;value&quot;: {
+                    &quot;show-cross-hairs&quot;: true,
+                    &quot;lens-mode&quot;: false,
+                    &quot;mag-factor&quot;: 2,
+                    &quot;mouse-tracking&quot;: &quot;proportional&quot;,
+                    &quot;screen-position&quot;: &quot;right-half&quot;,
+                    &quot;scroll-at-edges&quot;: true
+                }
+            }],
+            &quot;http://registry.gpii.org/applications/com.microsoft.windows.magnifier&quot;: [{
+                &quot;value&quot;: {
+                    &quot;Magnification&quot;: {
+                        &quot;value&quot;: 200,
+                        &quot;dataType&quot;: &quot;REG_DWORD&quot;
+                    },
+                    &quot;ZoomIncrement&quot;: {
+                        &quot;value&quot;: 50,
+                        &quot;dataType&quot;: &quot;REG_DWORD&quot;
+                    },
+                    &quot;Invert&quot;: {
+                        &quot;value&quot;: 0,
+                        &quot;dataType&quot;: &quot;REG_DWORD&quot;
+                    },
+                    &quot;FollowMouse&quot;: {
+                        &quot;value&quot;: 1,
+                        &quot;dataType&quot;: &quot;REG_DWORD&quot;
+                    },
+                    &quot;FollowFocus&quot;: {
+                        &quot;value&quot;: 1,
+                        &quot;dataType&quot;: &quot;REG_DWORD&quot;
+                    },
+                    &quot;FollowCaret&quot;: {
+                        &quot;value&quot;: 1,
+                        &quot;dataType&quot;: &quot;REG_DWORD&quot;
+                    },
+                    &quot;MagnificationModel&quot;: {
+                        &quot;value&quot;: 1,
+                        &quot;dataType&quot;: &quot;REG_DWORD&quot;
+                    }
+                }
+            }],
+            &quot;http://registry.gpii.org/common/fontSize&quot;: [{ &quot;value&quot;: 24 }],
+            &quot;http://registry.gpii.org/common/foregroundColor&quot;: [{ &quot;value&quot;: &quot;white&quot; }],
+            &quot;http://registry.gpii.org/common/backgroundColor&quot;: [{ &quot;value&quot;: &quot;black&quot; }],
+            &quot;http://registry.gpii.org/common/fontFaceFontName&quot;: [{ &quot;value&quot;: [&quot;Comic Sans&quot;] }],
+            &quot;http://registry.gpii.org/common/fontFaceGenericFontFace&quot;: [{ &quot;value&quot;: &quot;sans serif&quot; }],
+            &quot;http://registry.gpii.org/common/magnification&quot;: [{ &quot;value&quot;: 2.0 }],
+            &quot;http://registry.gpii.org/common/tracking&quot;: [{ &quot;value&quot;: &quot;mouse&quot; }],
+            &quot;http://registry.gpii.org/common/invertImages&quot;: [{ &quot;value&quot;: true }],
+            &quot;http://registry.gpii.org/common/adaptationPreference&quot;: [{ &quot;value&quot;: [
+                {
+                    &quot;adaptationType&quot;: &quot;caption&quot;,
+                    &quot;language&quot;: &quot;en&quot;
+                },
+                {}
+            ]}],
+            &quot;http://registry.gpii.org/common/tableOfContents&quot;: [{ &quot;value&quot;: false }]
+        }"
+        >
+        </http>
+      </request>
+    </session>
+    <session name="session6" probability="1" type="ts_http">
+      <request subst="true">
+        <http
+          method="POST"
+          url="/user/roger"
+          content_type="application/json"
+          contents="{}"
+        >
+        </http>
+      </request>
+      <request subst="true">
+        <http
+          method="GET"
+          url="/user/roger"
+        >
+        </http>
+      </request>
+    </session>
+    <session name="session7" probability="22" type="ts_http">
+      <request subst="true">
+        <http
+          method="GET"
+          url="/user/elaine"
+        >
+        </http>
+      </request>
+    </session>
+    <session name="session8" probability="21" type="ts_http">
+      <request subst="true">
+        <http
+          method="GET"
+          url="/user/nisha"
+        >
+        </http>
+      </request>
+    </session>
+    <session name="session9" probability="22" type="ts_http">
+      <request subst="true">
+        <http
+          method="GET"
+          url="/user/carla"
+        >
+        </http>
+      </request>
+    </session>
+    <session name="session10" probability="20" type="ts_http">
+      <request subst="true">
+        <http
+          method="GET"
+          url="/user/andrei"
+        >
+        </http>
+      </request>
+    </session>
+  </sessions>
+</tsung>

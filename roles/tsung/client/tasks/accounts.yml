@@ -1,0 +1,21 @@
+---
+- name: tsung - add tsung group
+  group: name=tsung state=present
+
+- name: tsung - add tsung user
+  user: >
+    name=tsung
+    comment="Tsung User"
+    group=tsung
+    home=/home/tsung
+    shell=/bin/bash
+
+# Add the Tsung controller host's public SSH key that get's generated
+# on the controller host using the tsung/controller role
+- name: tsung - add controller host's SSH public key
+  authorized_key: >
+    user='tsung'
+    manage_dir=yes
+    state=present
+    key="{{ lookup('file', '/var/tmp/tsung_controller_ssh_key') }}"
+    path='/home/tsung/.ssh/authorized_keys'

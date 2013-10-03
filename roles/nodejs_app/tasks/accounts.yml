@@ -1,0 +1,11 @@
+---
+- name: nodejs_app - add nodejs_app_group
+  group: name={{ nodejs_app_group }} state=present
+
+- name: nodejs_app - add nodejs_app_user
+  user: >
+    name={{ nodejs_app_user }}
+    comment="Node.js User"
+    group=nodejs
+    home=/usr/share/node
+    system=yes

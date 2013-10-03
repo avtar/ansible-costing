@@ -1,0 +1,14 @@
+---
+- name: common - add the epel repository's gpg key
+  copy: src=RPM-GPG-KEY-EPEL-6 dest=/etc/pki/rpm-gpg
+
+- name: common - disable the epel repository by default
+  copy: src=epel.repo dest=/etc/yum.repos.d/epel.repo
+
+- name: common - install common packages
+  yum: name={{ item }} state=installed
+  with_items:
+    - redhat-lsb-core
+    - ntpdate
+    - ntp
+    - yum-utils

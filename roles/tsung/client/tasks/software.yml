@@ -1,0 +1,3 @@
+---
+- name: tsung - install tsung package
+  yum: name=tsung enablerepo=epel state=present

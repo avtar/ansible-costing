@@ -1,0 +1,9 @@
+---
+- name: nginx - import nginx signing key
+  rpm_key: key={{ nginx_key }} state=present
+
+- name: nginx - enable the nginx repository
+  yum: name={{ nginx_release }} state=present
+
+- name: nginx - install packages
+  yum: name={{ nginx_package }} state=present

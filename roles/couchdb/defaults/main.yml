@@ -1,0 +1,40 @@
+---
+couchdb_create_admin_user: false
+
+# Used in templates/local.ini.j2
+couchdb_admin_username:
+couchdb_admin_password:
+
+# Used in tasks/create_database.yml
+couchdb_database_name:
+
+# System user account and group
+# Used in tasks/accounts.yml
+couchdb_user: 'couchdb'
+couchdb_group: 'couchdb'
+
+couchdb_port: '5984'
+
+# Used in templates/local.ini.j2
+couchdb_ip: '0.0.0.0'
+
+# Used in templates/local.ini.j2
+couchdb_enable_automatic_compaction: true
+
+# Used in templates/local.ini.j2
+# The delay, in seconds, between each check for which database and view
+# indexes need to be compacted
+couchdb_check_interval: '300'
+
+# Used in templates/local.ini.j2
+# If a database or view index file is smaller then this value
+# (in bytes), compaction will not happen. Very small files always have
+# a very high fragmentation therefore it's not worth to compact them
+couchdb_min_file_size: '131072'
+
+# Used in templates/local.ini.j2
+# The period within which database compaction is allowed. The value for
+# these parameters must obey the format:
+# HH:MM - HH:MM (HH in [0..23], MM in [0..59])
+couchdb_compaction_start_time: '23:00'
+couchdb_compaction_end_time: '04:00'

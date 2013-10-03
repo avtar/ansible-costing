@@ -1,0 +1,3 @@
+---
+- name: common - disable iptables to accommodate tsung
+  service: name=iptables state=stopped enabled=no

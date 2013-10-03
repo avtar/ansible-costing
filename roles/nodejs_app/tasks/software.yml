@@ -1,0 +1,12 @@
+---
+- name: nodejs_app - install node.js package
+  yum: name={{ nodejs_package }} enablerepo=epel state=present
+
+- name: nodejs_app - copy custom packages to /var/tmp/packages
+  copy: src={{ item }} dest=/var/tmp/
+  with_fileglob:
+    - ../common/files/packages/*
+
+- name: nodejs_app - install app package
+  command: yum -y localinstall /var/tmp/{{ nodejs_app_package }}
+  notify: restart nodejs_app

@@ -1,0 +1,9 @@
+---
+- name: preferences_server - modify production.json config to include couchdb ip
+  template: >
+    src=production.json.j2
+    dest={{ nodejs_app_location }}/gpii/node_modules/preferencesServer/configs/production.json
+    mode=0644
+    owner=root
+  when: nodejs_app_env == 'production'
+  notify: restart nodejs_app

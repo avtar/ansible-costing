@@ -1,0 +1,13 @@
+---
+# Any users or groups get created here
+- include: accounts.yml
+
+# Tasks involving rpm/yum, npm, pip, tar, git, etc
+- include: software.yml
+
+# Perform filesystem changes, including copying files, creating
+# directories, etc
+- include: configuration.yml
+
+# Manage services
+- include: services.yml

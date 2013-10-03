@@ -1,0 +1,11 @@
+---
+- name: couchdb - add couchdb group
+  group: name={{ couchdb_group }} state=present
+
+- name: couchdb - add couchdb user
+  user: >
+    name={{ couchdb_user }}
+    comment="CouchDB User"
+    group=couchdb
+    home=/var/lib/couchdb
+    system=yes

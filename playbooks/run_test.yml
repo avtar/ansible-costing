@@ -1,0 +1,76 @@
+---
+# This playbook is used to set up and initiate Tsung test runs. It:
+# 1. Recreates the CouchDB database
+# 2. Starts the 30 minute Tsung test run, waits for 31 minutes just in
+#    case, and polls the process every minute
+# 3. Generates a report for the last test run which can be viewed using
+#    the web server running on the Tsung controller host
+
+- hosts: couchdb_servers[0]
+  user: deploy
+  gather_facts: yes
+  sudo: true
+  vars_files:
+    - ../group_vars/all
+  tasks:
+    - name: install npm
+      yum: name=npm enablerepo=epel state=present
+
+    - name: install kanso using npm
+      npm: name=kanso global=yes state=present
+
+    - name: install curl
+      yum: name=curl state=present
+
+    - name: delete database if it exists
+      shell: /usr/bin/curl -sSX DELETE http://{{ couchdb_admin_username }}:{{ couchdb_admin_password }}\@{{ couchdb_ip }}:5984/{{ couchdb_database_name }}
+
+    - name: create a new database
+      shell: /usr/bin/curl -sSX PUT http://{{ couchdb_admin_username }}:{{ couchdb_admin_password }}\@{{ couchdb_ip }}:5984/{{ couchdb_database_name }}
+
+    - name: modify preferences before uploading to couchdb
+      script: files/modify_preferences.sh {{ nodejs_app_location }}/testData/preferences /tmp/modified_preferences
+
+    - name: upload modified preferences using kanso
+      shell: for preference in /tmp/modified_preferences/*.json; do /usr/bin/kanso upload $preference http://{{ couchdb_admin_username }}:{{ couchdb_admin_password }}\@{{ couchdb_ip }}:5984/{{ couchdb_database_name }}; done
+
+- hosts: tsung_controller[0]
+  user: deploy
+  gather_facts: yes
+  sudo: true
+  sudo_user: tsung
+  tasks:
+    - name: ensure /home/tsung/test_configs exists
+      file: >
+        path=/home/tsung/test_configs
+        state=directory
+        mode=0755
+        owner=tsung
+        group=tsung
+
+    - name: copy test configs to the tsung controller host
+      template: >
+        src=templates/{{ item }}.xml.j2
+        dest=/home/tsung/test_configs/{{ item }}.xml
+        mode=0644
+        owner=tsung
+        group=tsung
+      with_items:
+        - scenario_1
+        - scenario_2
+        - scenario_3
+        - scenario_4
+
+    - name: starting tsung load test
+      command: tsung -f /home/tsung/test_configs/"{{ inventory_file }}".xml -l /srv/www/tsung/logs/ start
+      async: 1860
+      poll: 60
+
+- hosts: tsung_controller[0]
+  user: deploy
+  gather_facts: yes
+  sudo: true
+  sudo_user: tsung
+  tasks:
+    - name: generate report for the latest load test so it's accessible using nginx
+      script: files/generate_report.sh

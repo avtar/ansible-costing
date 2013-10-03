@@ -1,0 +1,12 @@
+server {
+    listen 0.0.0.0:80;
+    server_name {{ ansible_hostname }};
+    access_log /var/log/nginx/{{ ansible_hostname }}_access.log;
+    error_log /var/log/nginx/{{ ansible_hostname }}_error.log;
+
+    location / {
+      root /srv/www/tsung/;
+      index index.html;
+      autoindex on;
+    }
+}

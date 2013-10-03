@@ -1,0 +1,3 @@
+---
+- name: couchdb - start and enable couchdb
+  service: name=couchdb state=started enabled=yes

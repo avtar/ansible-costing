@@ -1,0 +1,23 @@
+[httpd]
+bind_address = {{ couchdb_ip }}
+
+[ssl]
+verify_ssl_certificates = false
+ssl_certificate_max_depth = 1
+
+{% if couchdb_create_admin_user %}
+[admins]
+{{ couchdb_admin_username }} = {{ couchdb_admin_password }}
+{% endif %}
+
+{% if couchdb_enable_automatic_compaction %}
+[daemons]
+compaction_daemon={couch_compaction_daemon, start_link, []}
+
+[compaction_daemon]
+check_interval = {{ couchdb_check_interval }}
+min_file_size = {{ couchdb_min_file_size }}
+
+[compactions]
+_default = [{db_fragmentation, "70%"}, {view_fragmentation, "60%"}, {from, "{{ couchdb_compaction_start_time }}"}, {to, "{{ couchdb_compaction_end_time }}"}]
+{% endif %}

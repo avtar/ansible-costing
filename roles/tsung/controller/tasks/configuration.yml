@@ -1,0 +1,17 @@
+---
+- name: tsung - ensure /srv/www/tsung exists
+  file: >
+    path=/srv/www/tsung
+    state=directory
+    mode=0755
+    owner=tsung
+    group=tsung
+
+- name: tsung - create /etc/nginx/conf.d/default.conf
+  template: >
+    src=default.conf.j2
+    dest=/etc/nginx/conf.d/default.conf
+    mode=0644
+    owner=root
+    group=root
+  notify: restart nginx

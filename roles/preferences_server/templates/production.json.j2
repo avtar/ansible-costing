@@ -1,0 +1,32 @@
+{
+    "typeName": "preferencesServer.production",
+    "options": {
+        "gradeNames": ["autoInit", "fluid.littleComponent"],
+        "components": {
+            "server": {
+                "type": "kettle.server",
+                "options": {
+                    "logging": {{ preferences_server_enable_logging }},
+                    "components": {
+                        "preferencesServer": {
+                            "type": "gpii.preferencesServer",
+                            "options": {
+                                "userSourceUrl": "http://{{ couchdb_ip }}:{{ couchdb_port }}/{{ couchdb_database_name }}/%token"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "demands": [{
+        "demandingName": "rawUserSource",
+        "contextNames": "gpii.preferencesServer",
+        "demandSpec": {
+            "funcName": "kettle.dataSource.CouchDB"
+        }
+    }],
+    "includes": [
+        "./base.json"
+    ]
+}

@@ -1,0 +1,4 @@
+---
+- name: nginx - create a self-signed certificate
+  command: openssl req -x509 -newkey rsa:2048 -subj "/C=CA/ST=Ontario/L=Toronto/O=IDI/CN={{ ansible_hostname }}" -keyout /etc/pki/tls/private/server.key -out /etc/pki/tls/certs/server.crt -nodes -days 3650 creates=/etc/pki/tls/certs/server.crt
+  notify: restart nginx

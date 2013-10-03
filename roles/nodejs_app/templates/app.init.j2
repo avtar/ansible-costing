@@ -1,0 +1,51 @@
+#!/bin/sh
+
+#
+# chkconfig: 35 99 99
+# description: init.d script for {{ nodejs_app_name }}
+#
+
+. /etc/rc.d/init.d/functions
+
+NODEJS_USER="{{ nodejs_app_user }}"
+NODEJS_APP="{{ nodejs_app_name }}"
+NODEJS_BIN="/usr/bin/node"
+NODEJS_ARGS="{{ nodejs_app_args }}"
+NODEJS_LOG="{{ nodejs_app_log }}"
+NODEJS_ERROR_LOG="{{ nodejs_app_error_log }}"
+
+do_start()
+{
+        echo -n $"Starting $NODEJS_APP: "
+        runuser -l "$NODEJS_USER" -c "NODE_ENV={{ nodejs_app_env }} $NODEJS_BIN $NODEJS_ARGS >> $NODEJS_LOG 2> $NODEJS_ERROR_LOG &" && echo_success || echo_failure
+        RETVAL=$?
+        echo
+        [ $RETVAL -eq 0 ]
+}
+do_stop()
+{
+        echo -n $"Stopping $NODEJS_APP: "
+        pid=`ps -aefw | grep "$NODEJS_BIN $NODEJS_ARGS" | grep -v " grep " | awk '{print $2}'`
+        kill -9 $pid > /dev/null 2>&1 && echo_success || echo_failure
+        RETVAL=$?
+        echo
+        [ $RETVAL -eq 0 ]
+}
+
+case "$1" in
+        start)
+                do_start
+                ;;
+        stop)
+                do_stop
+                ;;
+        restart)
+                do_stop
+                do_start
+                ;;
+        *)
+                echo "Usage: $0 {start|stop|restart}"
+                RETVAL=1
+esac
+
+exit $RETVAL

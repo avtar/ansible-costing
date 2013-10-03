@@ -1,0 +1,42 @@
+user  nginx;
+pid   /var/run/nginx.pid;
+
+worker_processes 4;
+worker_rlimit_nofile 200000;
+error_log /var/log/nginx/error.log crit;
+
+events {
+  worker_connections 4096;
+  use epoll;
+  multi_accept on;
+}
+
+http {
+  include       /etc/nginx/mime.types;
+  default_type  application/octet-stream;
+
+  gzip on;
+  gzip_comp_level 6;
+  gzip_vary on;
+  gzip_min_length  1000;
+  gzip_proxied any;
+  gzip_types text/plain text/css application/json application/x-javascript text/xml text/javascript;
+  gzip_buffers 16 8k;
+
+  log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+                    '$status $body_bytes_sent "$http_referer" '
+                    '"$http_user_agent" "$http_x_forwarded_for"';
+
+  access_log /var/log/nginx/access.log main buffer=16k;
+
+  sendfile on;
+  tcp_nopush on;
+  tcp_nodelay on;
+  keepalive_timeout 30;
+  keepalive_requests 1000;
+  reset_timedout_connection on;
+  client_body_timeout 10;
+  send_timeout 2;
+
+  include /etc/nginx/conf.d/*.conf;
+}

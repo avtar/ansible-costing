@@ -1,0 +1,16 @@
+---
+- name: nodejs_app - ensure /var/log/nodejs exists
+  file: >
+    path=/var/log/nodejs
+    state=directory
+    mode=0755
+    owner={{ nodejs_app_user }}
+    group={{ nodejs_app_group }}
+
+- name: nodejs_app - create /etc/init.d/nodejs_app_name script
+  template: >
+    src=app.init.j2
+    dest=/etc/init.d/{{ nodejs_app_name }}
+    mode=0755
+    owner=root
+    group=root

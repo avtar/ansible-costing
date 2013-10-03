@@ -1,0 +1,40 @@
+---
+- hosts: all
+  user: deploy
+  sudo: true
+  roles:
+    - common
+
+- hosts: tsung_controller
+  user: deploy
+  sudo: true
+  roles:
+    - tsung/controller
+    - nginx
+
+- hosts: tsung_clients
+  user: deploy
+  sudo: true
+  roles:
+    - tsung/client
+
+- hosts: couchdb_servers
+  user: deploy
+  sudo: true
+  roles:
+    - couchdb
+    - tsung/client
+
+- hosts: preferences_servers
+  user: deploy
+  sudo: true
+  roles:
+    - preferences_server
+    - tsung/client
+
+- hosts: reverse_proxies
+  user: deploy
+  sudo: true
+  roles:
+    - reverse_proxy
+    - tsung/client

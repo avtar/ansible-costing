@@ -1,0 +1,34 @@
+---
+- name: tsung - add tsung group
+  group: name=tsung state=present
+
+# Create a SSH key for the tsung user on the controller host and don't
+# set a passphrase, as stated in the documentation
+- name: tsung - add tsung user
+  user: >
+    name=tsung
+    comment="Tsung User"
+    group=tsung
+    home=/home/tsung
+    shell=/bin/bash
+    generate_ssh_key=yes
+    ssh_key_file=/home/tsung/.ssh/id_rsa
+
+# Fetch the public key generated above, store it in
+# /var/tmp/tsung_controller_key on the Ansible management
+# host and then add it to the other Tsung hosts that use the
+# tsung/common role
+- name: tsung - fetch controller host's SSH public key
+  fetch: >
+    src=/home/tsung/.ssh/id_rsa.pub
+    dest=/var/tmp/tsung_controller_ssh_key
+    flat=yes
+    fail_on_missing=yes
+
+- name: tsung - create /home/tsung/.ssh/config
+  template: >
+    src=ssh_config.j2
+    dest=/home/tsung/.ssh/config
+    mode=0644
+    owner=tsung
+    group=tsung

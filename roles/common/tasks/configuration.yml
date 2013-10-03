@@ -1,0 +1,45 @@
+---
+- name: common - create /etc/hosts for all hosts
+  template: src=hosts.j2 dest=/etc/hosts
+
+- name: common - increase number of open files
+  copy: >
+    src=limits.d/91-nofile.conf
+    dest=/etc/security/limits.d/91-nofile.conf
+    mode=0644
+    owner=root
+    group=root
+
+- name: common - disable ssh access for root
+  action: lineinfile dest=/etc/ssh/sshd_config regexp="^PermitRootLogin" line="PermitRootLogin no" state=present
+  notify: restart sshd
+
+- name: common - disable ssh password authentication
+  action: lineinfile dest=/etc/ssh/sshd_config regexp="^PasswordAuthentication" line="PasswordAuthentication no" state=present
+  notify: restart sshd
+
+- name: common - create /etc/ntp.conf
+  template: src=ntp.conf.j2 dest=/etc/ntp.conf owner=root group=root
+  notify: restart ntpd
+
+- command: ifconfig eth0 mtu 9000
+
+- command: ifconfig eth0 txqueuelen 10000
+
+- sysctl: name=net.ipv6.conf.all.disable_ipv6 value=1 state=present
+
+- sysctl: name=net.ipv6.conf.default.disable_ipv6 value=1 state=present
+
+- sysctl: name=net.core.rmem_max value=16777216 state=present
+
+- sysctl: name=net.core.wmem_max value=16777216 state=present
+
+- sysctl: name=net.ipv4.tcp_rmem value="4096 87380 16777216" state=present
+
+- sysctl: name=net.ipv4.tcp_wmem value="4096 65536 16777216" state=present
+
+- sysctl: name=net.core.netdev_max_backlog value=30000 state=present
+
+- sysctl: name=vm.swappiness value=0 state=present
+
+- sysctl: name=vm.min_free_kbytes value=65536 state=present

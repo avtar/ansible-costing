@@ -1,0 +1,13 @@
+---
+nodejs_package: 'nodejs-0.10.18-1.el6'
+
+# System user account and group
+nodejs_app_user: 'nodejs'
+nodejs_app_group: 'nodejs'
+
+# The directory where a package installation places the application or
+# where a repository gets cloned in case 'git_deploy' is set
+nodejs_app_location: "/opt/{{ nodejs_app_name }}"
+
+nodejs_app_log: "/var/log/nodejs/{{ nodejs_app_name }}.log"
+nodejs_app_error_log: "/var/log/nodejs/{{ nodejs_app_name }}-error.log"

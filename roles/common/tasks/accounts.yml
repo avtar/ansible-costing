@@ -1,0 +1,32 @@
+---
+- name: common - create deploy group
+  group: name='deploy' state=present
+
+- name: common - create deploy user
+  user: >
+    name='deploy'
+    comment="Deploy User"
+    createhome=yes
+    group='deploy'
+    groups='adm,wheel'
+    home='/home/deploy'
+    shell='/bin/bash'
+    state=present
+
+- name: common - set up authorized_keys for the deploy user
+  authorized_key: >
+    user='deploy'
+    manage_dir=yes
+    state=present
+    key="{{ item }}"
+  with_file:
+    - public_keys/deploy
+
+- name: common - provide sudo access to the deploy user
+  copy: >
+    src=sudoers.d/deploy
+    dest=/etc/sudoers.d/91-deploy
+    validate='visudo -cf %s'
+    mode=0440
+    owner=root
+    group=root

@@ -1,0 +1,6 @@
+---
+- include: accounts.yml
+
+- include: software.yml
+
+- include: configuration.yml

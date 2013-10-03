@@ -1,0 +1,35 @@
+---
+- name: couchdb - install dependencies
+  yum: >
+    name={{ item }}
+    enablerepo=epel
+    state=present
+  with_items:
+    - erlang-crypto
+    - erlang-erts
+    - erlang-ibrowse
+    - erlang-inets
+    - erlang-kernel
+    - erlang-mochiweb
+    - erlang-oauth
+    - erlang-os_mon
+    - erlang-snappy
+    - erlang-stdlib
+    - erlang-tools
+    - erlang-xmerl
+    - libicu
+
+- name: couchdb - copy custom packages to /var/tmp/packages
+  copy: src={{ item }} dest=/var/tmp/
+  with_fileglob:
+    - ../common/files/packages/*
+
+- name: couchdb - install js and couchdb
+  command: yum -y localinstall /var/tmp/{{ item }}
+  with_items:
+    - js-1.8.5-13.el6.x86_64.rpm
+    - couchdb-1.3.1-1.el6.x86_64.rpm
+
+- name: couchdb - ensure curl is installed
+  yum: name=curl state=present
+  when: couchdb_create_database

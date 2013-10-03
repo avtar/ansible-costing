@@ -1,0 +1,24 @@
+---
+iface: '{{ ansible_default_ipv4.interface }}'
+
+ntp_servers: [ 0.ca.pool.ntp.org, 1.ca.pool.ntp.org, 2.ca.pool.ntp.org, 3.ca.pool.ntp.org ]
+
+# Scenario 3 doesnt seem to work without this
+couchdb_create_admin_user: true
+couchdb_admin_username: 'admin'
+couchdb_admin_password: 'test'
+
+couchdb_database_name: 'user'
+
+# Used by couchdb and preferences servers hosts
+couchdb_ip: "{{ hostvars[groups['couchdb_servers'][0]].ansible_default_ipv4.address }}"
+couchdb_port: '5984'
+couchdb_database_name: 'user'
+
+nodejs_app_name: 'preferences_server'
+nodejs_app_env: 'production'
+nodejs_app_package: 'gpii-universal-201308231010-3.noarch.rpm'
+
+nodejs_app_location: "/opt/{{ nodejs_app_name }}"
+
+nodejs_app_args: "{{ nodejs_app_location }}/node_modules/kettle/lib/init.js {{ nodejs_app_location }}/gpii/node_modules/preferencesServer/configs/"
